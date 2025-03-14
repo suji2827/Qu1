@@ -1,0 +1,67 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+import java.io.File;
+
+public class SettingsPageTest {
+    WebDriver driver;
+
+    @BeforeClass
+    public void setup() {
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.get("file:///path/to/index.html");  // Change this to your actual file path
+    }
+
+    @Test(priority = 1)
+    public void testCheckboxAndRadioButton() {
+        // Select checkboxes
+        driver.findElement(By.id("newsletters")).click();
+        driver.findElement(By.id("updates")).click();
+        driver.findElement(By.id("offers")).click();
+        
+        // Select a radio button (Male)
+        driver.findElement(By.id("male")).click();
+        
+        // Click the Save button
+        driver.findElement(By.xpath("//button[contains(text(),'Save')]")).click();
+        
+        // Verify success message
+        WebElement successMessage = driver.findElement(By.id("saveMessage"));
+        Assert.assertTrue(successMessage.isDisplayed(), "Preferences Save Message is not displayed!");
+    }
+
+    @Test(priority = 2)
+    public void testFileUpload() {
+        WebElement uploadElement = driver.findElement(By.id("fileUpload"));
+        uploadElement.sendKeys("C:\\path\\to\\test-image.png");  // Provide a valid image file path
+
+        // Click Upload button
+        driver.findElement(By.xpath("//button[contains(text(),'Upload')]")).click();
+
+        // Verify success message
+        WebElement uploadMessage = driver.findElement(By.id("uploadMessage"));
+        Assert.assertTrue(uploadMessage.isDisplayed(), "File Upload Message is not displayed!");
+    }
+
+    @Test(priority = 3)
+    public void testFileDownload() {
+        // Click download link
+        driver.findElement(By.id("downloadLink")).click();
+
+        // Verify if file is downloaded
+        File downloadedFile = new File("C:\\Users\\YourUsername\\Downloads\\sample.txt");  // Update download path
+        Assert.assertTrue(downloadedFile.exists(), "Download file not found!");
+    }
+
+    @AfterClass
+    public void tearDown() {
+        driver.quit();
+    }
+}
